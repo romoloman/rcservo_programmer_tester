@@ -18,6 +18,7 @@ Hardware Requirements
     If tou decide to print the box for the 2.8 Display you will need also:
     1 - XT-30 Connector
     1 - Male RC Servo connector
+	4 - M2.5 x 4 Screws
 
 ## Software Requirements
 
