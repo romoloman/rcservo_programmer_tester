@@ -1,4 +1,4 @@
-*RC Servo Programmer/Tester on Cheap Yellow Display*
+# RC Servo Programmer/Tester on Cheap Yellow Display*
 
 A project to use a "Cheap Yellow Display" (based on ESP32) as Servo Programmer/Tester
 Project Description
@@ -11,7 +11,7 @@ The tester allow to place the servo at any position as well to perform continuos
 The goal is to provide a practical, on field usable tool to program and test servos.
 Hardware Requirements
 
-To build this project, you will need:
+## To build this project, you will need:
 
     A "Cheap Yellow Display" module (typically ESP32 with a 2.8" or 3.2" TFT display).
     A 470 Ohm resistor
@@ -19,7 +19,7 @@ To build this project, you will need:
     1 - XT-30 Connector
     1 - Male RC Servo connector
 
-*Software Requirements*
+## Software Requirements
 
     Arduino IDE
     Esp32 Framework for arduino ide
@@ -32,7 +32,7 @@ To build this project, you will need:
     
     EEZ Studio to customize the interface
 
-*Installation and Setup*
+## Installation and Setup
 
     Clone this repository to your computer.
     Open the project Arduino.
@@ -47,13 +47,13 @@ To build this project, you will need:
     Connect the CYD to the USB port of your PC
     Upload the code to your Cheap Yellow Display.
 
-*Usage*
+## Usage
 
     Connect the xt30 connector to a 2S LiPo battery (or even to a 4S NiMh for standard servos)
     With the touch pen turn around to the display to autocalibrate touch (need to be redone at any firwmare update)
     Connect the servo to the servo connector Press "READ SERVO" to Read current conviguratio and Write servo to update
     Swipe to the right to go to the servotester page, swipe left to go back to servo configuration page
     
-*Contributing*
+## Contributing
 
 Contributions are welcome! If you have ideas for improving the project, bug fixes, or new features, feel free to open an issue or submit a pull request.
