@@ -905,7 +905,7 @@ void create_screen_tester() {
         }
         {
             lv_obj_t *obj = lv_label_create(parent_obj);
-            lv_obj_set_pos(obj, 15, 50);
+            lv_obj_set_pos(obj, 10, 50);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "Pulse min (500-1500)");
         }
@@ -962,7 +962,7 @@ void create_screen_tester() {
         }
         {
             lv_obj_t *obj = lv_label_create(parent_obj);
-            lv_obj_set_pos(obj, 15, 80);
+            lv_obj_set_pos(obj, 10, 80);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "Pulse max (1500-2500)");
         }
@@ -1019,9 +1019,9 @@ void create_screen_tester() {
         }
         {
             lv_obj_t *obj = lv_label_create(parent_obj);
-            lv_obj_set_pos(obj, 15, 110);
+            lv_obj_set_pos(obj, 10, 110);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-            lv_label_set_text(obj, "Sweep time (1-60 sec)");
+            lv_label_set_text(obj, "Sweep time (0.1-60 sec)");
         }
         {
             // stsweepdec
@@ -1076,7 +1076,7 @@ void create_screen_tester() {
         }
         {
             lv_obj_t *obj = lv_label_create(parent_obj);
-            lv_obj_set_pos(obj, 15, 170);
+            lv_obj_set_pos(obj, 10, 170);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "Position (500-2500)");
         }
@@ -1101,7 +1101,7 @@ void create_screen_tester() {
         }
         {
             lv_obj_t *obj = lv_label_create(parent_obj);
-            lv_obj_set_pos(obj, 15, 140);
+            lv_obj_set_pos(obj, 10, 140);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "Sweep ON");
         }
