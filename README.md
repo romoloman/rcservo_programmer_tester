@@ -8,6 +8,7 @@ This repository contains the code and instructions to turn a simple ESP32-based 
 The tester work on any servo while at the moment the programmer works only on PTK Servos (other are planned to be supported). 
 It allows you to change servo parameters as neutral angle, min/max PPM Values, Gain, Deadband and other.
 The tester allow to place the servo at any position as well to perform continuos span between a minimum and maximun angle
+Also it allows to measue an incoming PPM signal from an RX (Plase a 1k Ohm resistor in series on the signal cable coming from the RX)
 
 The goal is to provide a practical, on field usable tool to program and test servos.
 Hardware Requirements
@@ -62,6 +63,7 @@ Contributions are welcome! If you have ideas for improving the project, bug fixe
 ![Main page](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/mainpage.png)
 ![Servo programmer](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/programmer.png)
 ![Servo tester](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/tester.png)
+![Pulse meter](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/pulsemeter.png)
 
 You can exit from programmer or servo tester page by swiping to te left.
 
