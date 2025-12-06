@@ -35,7 +35,7 @@ extern stteststruct sttest;
 extern uint readServo;
 extern uint writeServo;
 extern uint ServoTestOn;
-
+extern uint8_t MeterOn;
 extern uint8_t redrawScreen;
 int currentScreenIndex = 0;  // 0: main, 1: settings
 
@@ -43,6 +43,8 @@ int currentScreenIndex = 0;  // 0: main, 1: settings
 void loadScreen(int screenIndex) {
   if (screenIndex == 0) {
     lv_scr_load(objects.main);
+    ServoTestOn = 0;
+    MeterOn = 0;
     currentScreenIndex = 0;
   } else if (screenIndex == 1) {
     lv_scr_load(objects.programmer);
@@ -50,6 +52,10 @@ void loadScreen(int screenIndex) {
   } else if (screenIndex == 2) {
     lv_scr_load(objects.tester);
     currentScreenIndex = 2;
+  } else if (screenIndex == 3) {
+    lv_scr_load(objects.meter);
+    MeterOn = 1;
+    currentScreenIndex = 3;
   } else {
     LV_LOG_WARN("Indice schermo non valido");
   }
@@ -70,11 +76,14 @@ void action_gesture(lv_event_t *e) {
   }
 }
 
-void action_load_programmer(lv_event_t * e) {
+void action_load_programmer(lv_event_t *e) {
   loadScreen(1);  // Load Programmer screen
 };
-void action_load_tester(lv_event_t * e) {
+void action_load_tester(lv_event_t *e) {
   loadScreen(2);  // Load servo tester screen
+};
+void action_load_meter(lv_event_t *e) {
+  loadScreen(3);  // Load servo tester screen
 };
 
 void action_dec_pressed(lv_event_t *e) {
@@ -187,7 +196,7 @@ void action_dec_longpressed(lv_event_t *e) {
     }
   } else if (button == objects.pulsemaxdec) {
     if (servo.max_pulse > 1505) {
-      servo.max_pulse-=5;
+      servo.max_pulse -= 5;
       redrawScreen = 1;
     } else if (servo.max_pulse > 1500) {
       servo.max_pulse = 1500;
@@ -235,10 +244,10 @@ void action_dec_longpressed(lv_event_t *e) {
     }
   } else if (button == objects.stsweepdec) {
     if (sttest.sweeptime > 5) {
-      sttest.sweeptime-=5;
+      sttest.sweeptime -= 5;
       redrawScreen = 1;
-    } else if ((sttest.sweeptime <= 5) ) {
-      sttest.sweeptime=1;
+    } else if ((sttest.sweeptime <= 5)) {
+      sttest.sweeptime = 1;
       redrawScreen = 1;
     }
   } else if (button == objects.stcenterdec) {
@@ -395,49 +404,49 @@ void action_inc_longpressed(lv_event_t *e) {
     }
   } else if (button == objects.stpulsemininc) {
     if (sttest.min_pulse < 1490) {
-      sttest.min_pulse+=10;
+      sttest.min_pulse += 10;
       redrawScreen = 1;
     } else if (sttest.min_pulse < 1500) {
-      sttest.min_pulse=1500;
+      sttest.min_pulse = 1500;
       redrawScreen = 1;
     }
   } else if (button == objects.stpulsemaxinc) {
     if (sttest.max_pulse < 2490) {
-      sttest.max_pulse+=10;
+      sttest.max_pulse += 10;
       redrawScreen = 1;
     } else if (sttest.max_pulse < 2500) {
-      sttest.max_pulse=2500;
+      sttest.max_pulse = 2500;
       redrawScreen = 1;
     }
   } else if (button == objects.stsweepinc) {
     if (sttest.sweeptime < 595) {
-      sttest.sweeptime+=5;
+      sttest.sweeptime += 5;
       redrawScreen = 1;
-    }  else if (sttest.sweeptime<600) {
-      sttest.sweeptime=600;
+    } else if (sttest.sweeptime < 600) {
+      sttest.sweeptime = 600;
       redrawScreen = 1;
     }
   } else if (button == objects.stcenterinc) {
     if (sttest.position < 2490) {
-      sttest.position+=10;
+      sttest.position += 10;
       redrawScreen = 1;
     } else if (sttest.position < 2500) {
-      sttest.position=2500;
+      sttest.position = 2500;
       redrawScreen = 1;
     }
   }
 };
 
-void action_setposition(lv_event_t * e) {
+void action_setposition(lv_event_t *e) {
   lv_obj_t *lbl = (lv_obj_t *)lv_event_get_target(e);
   if (lbl == objects.stpulseminlbl) {
-    sttest.position=sttest.min_pulse;
+    sttest.position = sttest.min_pulse;
     redrawScreen = 1;
   } else if (lbl == objects.stpulsemaxlbl) {
-    sttest.position=sttest.max_pulse;
+    sttest.position = sttest.max_pulse;
     redrawScreen = 1;
   } else if (lbl == objects.stcenterlbl) {
-    sttest.position=1500;
+    sttest.position = 1500;
     redrawScreen = 1;
   }
 };
@@ -493,7 +502,7 @@ void action_screen_loaded(lv_event_t *e) {
   lv_obj_t *screen = (lv_obj_t *)lv_event_get_target(e);
   if (screen == objects.main) {
     lv_obj_scroll_to_y(objects.main, 0, LV_ANIM_OFF);
-  }  
+  }
   if (screen == objects.programmer) {
     lv_obj_scroll_to_y(objects.programmer, 0, LV_ANIM_OFF);
   }

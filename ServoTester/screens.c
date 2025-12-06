@@ -25,7 +25,7 @@ void create_screen_main() {
         {
             lv_obj_t *obj = lv_button_create(parent_obj);
             objects.obj0 = obj;
-            lv_obj_set_pos(obj, 40, 10);
+            lv_obj_set_pos(obj, 40, 5);
             lv_obj_set_size(obj, 100, 120);
             lv_obj_add_event_cb(obj, action_load_programmer, LV_EVENT_CLICKED, (void *)0);
             lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -55,7 +55,7 @@ void create_screen_main() {
         {
             lv_obj_t *obj = lv_button_create(parent_obj);
             objects.obj1 = obj;
-            lv_obj_set_pos(obj, 180, 10);
+            lv_obj_set_pos(obj, 180, 5);
             lv_obj_set_size(obj, 100, 120);
             lv_obj_add_event_cb(obj, action_load_tester, LV_EVENT_CLICKED, (void *)0);
             lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -79,6 +79,36 @@ void create_screen_main() {
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_label_set_text(obj, "Servo Tester");
+                }
+            }
+        }
+        {
+            lv_obj_t *obj = lv_button_create(parent_obj);
+            objects.obj2 = obj;
+            lv_obj_set_pos(obj, 180, 120);
+            lv_obj_set_size(obj, 100, 120);
+            lv_obj_add_event_cb(obj, action_load_meter, LV_EVENT_CLICKED, (void *)0);
+            lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_left(obj, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_right(obj, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_shadow_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_shadow_ofs_y(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            {
+                lv_obj_t *parent_obj = obj;
+                {
+                    lv_obj_t *obj = lv_image_create(parent_obj);
+                    lv_obj_set_pos(obj, 0, 0);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_image_set_src(obj, &img_oscilloscope);
+                }
+                {
+                    lv_obj_t *obj = lv_label_create(parent_obj);
+                    lv_obj_set_pos(obj, 0, 40);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_label_set_text(obj, "Signal Meter");
                 }
             }
         }
@@ -880,7 +910,7 @@ void create_screen_tester() {
         lv_obj_t *parent_obj = obj;
         {
             lv_obj_t *obj = lv_spangroup_create(parent_obj);
-            objects.obj2 = obj;
+            objects.obj3 = obj;
             lv_obj_set_pos(obj, 0, 0);
             lv_obj_set_size(obj, 320, 40);
             lv_obj_set_style_bg_color(obj, lv_color_hex(0xff00c6ff), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -893,7 +923,7 @@ void create_screen_tester() {
                 lv_obj_t *parent_obj = obj;
                 {
                     lv_obj_t *obj = lv_label_create(parent_obj);
-                    objects.obj3 = obj;
+                    objects.obj4 = obj;
                     lv_obj_set_pos(obj, 91, 11);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_obj_set_style_text_font(obj, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -1200,6 +1230,60 @@ void create_screen_tester() {
 void tick_screen_tester() {
 }
 
+void create_screen_meter() {
+    lv_obj_t *obj = lv_obj_create(0);
+    objects.meter = obj;
+    lv_obj_set_pos(obj, 0, 0);
+    lv_obj_set_size(obj, 320, 240);
+    lv_obj_add_event_cb(obj, action_screen_loaded, LV_EVENT_SCREEN_LOADED, (void *)0);
+    lv_obj_add_event_cb(obj, action_gesture, LV_EVENT_GESTURE, (void *)0);
+    lv_obj_set_style_text_font(obj, &lv_font_montserrat_38, LV_PART_SCROLLBAR | LV_STATE_SCROLLED);
+    lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    {
+        lv_obj_t *parent_obj = obj;
+        {
+            lv_obj_t *obj = lv_spangroup_create(parent_obj);
+            objects.obj5 = obj;
+            lv_obj_set_pos(obj, 0, 0);
+            lv_obj_set_size(obj, 320, 40);
+            lv_obj_set_style_bg_color(obj, lv_color_hex(0xfff00828), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_layout(obj, LV_LAYOUT_FLEX, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_flex_main_place(obj, LV_FLEX_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_flex_cross_place(obj, LV_FLEX_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_flex_track_place(obj, LV_FLEX_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+            {
+                lv_obj_t *parent_obj = obj;
+                {
+                    lv_obj_t *obj = lv_label_create(parent_obj);
+                    objects.obj6 = obj;
+                    lv_obj_set_pos(obj, 91, 11);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_obj_set_style_text_font(obj, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_decor(obj, LV_TEXT_DECOR_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_label_set_text(obj, "PULSE METER");
+                }
+            }
+        }
+        {
+            // pulsevaluelbl
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.pulsevaluelbl = obj;
+            lv_obj_set_pos(obj, 40, 94);
+            lv_obj_set_size(obj, 240, LV_SIZE_CONTENT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "1500 us");
+        }
+    }
+    
+    tick_screen_meter();
+}
+
+void tick_screen_meter() {
+}
+
 
 
 typedef void (*tick_screen_func_t)();
@@ -1207,6 +1291,7 @@ tick_screen_func_t tick_screen_funcs[] = {
     tick_screen_main,
     tick_screen_programmer,
     tick_screen_tester,
+    tick_screen_meter,
 };
 void tick_screen(int screen_index) {
     tick_screen_funcs[screen_index]();
@@ -1223,4 +1308,5 @@ void create_screens() {
     create_screen_main();
     create_screen_programmer();
     create_screen_tester();
+    create_screen_meter();
 }
