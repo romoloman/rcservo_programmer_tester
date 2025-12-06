@@ -24,7 +24,7 @@ Hardware Requirements
 ## Software Requirements
 
     Arduino IDE
-    Esp32 Framework for arduino ide
+    Esp32 Framework for arduino ide (works up to version up to 3.3.3. Version 3.3.4 has some issues with ESP32Servo library)
     Necessary libraries for display management (install all of them from arduino library manager):
       TFT_eSPI - https://github.com/Bodmer/TFT_eSPI
       LVGL 9.4 - https://github.com/lvgl/lvgl
