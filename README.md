@@ -1,7 +1,8 @@
 # RC Servo Programmer/Tester on Cheap Yellow Display*
 
 A project to use a "Cheap Yellow Display" (based on ESP32) as Servo Programmer/Tester
-Project Description
+
+## Project Description
 
 This repository contains the code and instructions to turn a simple ESP32-based "Cheap Yellow Display" into a practical servo programmer and tester for RC Servo:
 The tester work on any servo while at the moment the programmer works only on PTK Servos (other are planned to be supported). 
