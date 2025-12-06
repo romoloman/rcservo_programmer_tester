@@ -9,7 +9,10 @@ extern "C" {
 
 typedef struct _objects_t {
     lv_obj_t *main;
-    lv_obj_t *settings;
+    lv_obj_t *programmer;
+    lv_obj_t *tester;
+    lv_obj_t *obj0;
+    lv_obj_t *obj1;
     lv_obj_t *readservo;
     lv_obj_t *writeservo;
     lv_obj_t *msglbl;
@@ -48,8 +51,8 @@ typedef struct _objects_t {
     lv_obj_t *ololpowerinc;
     lv_obj_t *inversionsw;
     lv_obj_t *softstartsw;
-    lv_obj_t *obj0;
-    lv_obj_t *obj1;
+    lv_obj_t *obj2;
+    lv_obj_t *obj3;
     lv_obj_t *stpulsemindec;
     lv_obj_t *stpulseminlbl;
     lv_obj_t *stpulsemininc;
@@ -71,14 +74,18 @@ extern objects_t objects;
 
 enum ScreensEnum {
     SCREEN_ID_MAIN = 1,
-    SCREEN_ID_SETTINGS = 2,
+    SCREEN_ID_PROGRAMMER = 2,
+    SCREEN_ID_TESTER = 3,
 };
 
 void create_screen_main();
 void tick_screen_main();
 
-void create_screen_settings();
-void tick_screen_settings();
+void create_screen_programmer();
+void tick_screen_programmer();
+
+void create_screen_tester();
+void tick_screen_tester();
 
 void tick_screen_by_id(enum ScreensEnum screenId);
 void tick_screen(int screen_index);

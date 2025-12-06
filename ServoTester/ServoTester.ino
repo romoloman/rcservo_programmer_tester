@@ -17,7 +17,7 @@ Servo myservo;  // create servo object to control a servo
 
 // Set the following to true for serial debugging
 #define DEBUG false
-#define DEBUGREADCHARS true
+#define DEBUGREADCHARS false
 char buffer[30];
 uint8_t redrawScreen = 0;
 uint8_t readServo = 0;
@@ -152,7 +152,7 @@ servostruct servoquery;
 struct stteststruct {
   uint16_t min_pulse;
   uint16_t max_pulse;
-  uint8_t sweeptime;
+  uint16_t sweeptime;
   uint8_t sweepon;
   uint16_t position;
 };
@@ -556,7 +556,7 @@ void loop() {
       } else {
         if ((nowmicros - lastsweep) > 19900) {
           lastsweep=nowmicros;
-          ServoIncrement = ((float)(sttest.max_pulse - sttest.min_pulse)) / (50 * sttest.sweeptime);
+          ServoIncrement = ((float)(sttest.max_pulse - sttest.min_pulse)) / (5 * sttest.sweeptime);
           if (SweepDirection == 1) {
             ServoPosition += ServoIncrement;
             if (ServoPosition > ((float)sttest.max_pulse)) {
@@ -670,7 +670,7 @@ void loop() {
     lv_label_set_text(objects.stpulseminlbl, buffer);
     sprintf(buffer, "%d", sttest.max_pulse);
     lv_label_set_text(objects.stpulsemaxlbl, buffer);
-    sprintf(buffer, "%d", sttest.sweeptime);
+    sprintf(buffer, "%0.1f", ((float)sttest.sweeptime)/10);
     lv_label_set_text(objects.stsweeplbl, buffer);
     if (sttest.sweepon == 1) {
       lv_obj_set_state(objects.stsweepsw, LV_STATE_CHECKED, LV_ANIM_ON);

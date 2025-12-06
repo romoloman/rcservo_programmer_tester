@@ -18,6 +18,8 @@ extern void action_ststart(lv_event_t * e);
 extern void action_ststop(lv_event_t * e);
 extern void action_inc_longpressed(lv_event_t * e);
 extern void action_dec_longpressed(lv_event_t * e);
+extern void action_load_programmer(lv_event_t * e);
+extern void action_load_tester(lv_event_t * e);
 
 
 #ifdef __cplusplus

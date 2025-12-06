@@ -25,7 +25,7 @@ extern servostruct servo;
 struct stteststruct {
   uint16_t min_pulse;
   uint16_t max_pulse;
-  uint8_t sweeptime;
+  uint16_t sweeptime;
   uint8_t sweepon;
   uint16_t position;
 };
@@ -45,8 +45,11 @@ void loadScreen(int screenIndex) {
     lv_scr_load(objects.main);
     currentScreenIndex = 0;
   } else if (screenIndex == 1) {
-    lv_scr_load(objects.settings);
+    lv_scr_load(objects.programmer);
     currentScreenIndex = 1;
+  } else if (screenIndex == 2) {
+    lv_scr_load(objects.tester);
+    currentScreenIndex = 2;
   } else {
     LV_LOG_WARN("Indice schermo non valido");
   }
@@ -56,20 +59,23 @@ void action_gesture(lv_event_t *e) {
   lv_indev_t *indev = lv_event_get_indev(e);
   lv_dir_t dir = lv_indev_get_gesture_dir(indev);
   switch (dir) {
-    case LV_DIR_RIGHT:
-      if (currentScreenIndex == 0) {
-        loadScreen(1);  // Vai a servotester
+    case LV_DIR_LEFT:
+      if (currentScreenIndex != 0) {
+        loadScreen(0);  // Vai menu
       }
       break;
-    case LV_DIR_LEFT:
-      if (currentScreenIndex == 1) {
-        loadScreen(0);  // Vai a main
-      }
       break;
     default:
       break;
   }
 }
+
+void action_load_programmer(lv_event_t * e) {
+  loadScreen(1);  // Load Programmer screen
+};
+void action_load_tester(lv_event_t * e) {
+  loadScreen(2);  // Load servo tester screen
+};
 
 void action_dec_pressed(lv_event_t *e) {
   lv_obj_t *button = (lv_obj_t *)lv_event_get_target(e);  // Cast esplicito
@@ -228,8 +234,11 @@ void action_dec_longpressed(lv_event_t *e) {
       redrawScreen = 1;
     }
   } else if (button == objects.stsweepdec) {
-    if (sttest.sweeptime > 1) {
-      sttest.sweeptime--;
+    if (sttest.sweeptime > 5) {
+      sttest.sweeptime-=5;
+      redrawScreen = 1;
+    } else if ((sttest.sweeptime <= 5) ) {
+      sttest.sweeptime=1;
       redrawScreen = 1;
     }
   } else if (button == objects.stcenterdec) {
@@ -311,7 +320,7 @@ void action_inc_pressed(lv_event_t *e) {
       redrawScreen = 1;
     }
   } else if (button == objects.stsweepinc) {
-    if (sttest.sweeptime < 60) {
+    if (sttest.sweeptime < 600) {
       sttest.sweeptime++;
       redrawScreen = 1;
     }
@@ -401,8 +410,11 @@ void action_inc_longpressed(lv_event_t *e) {
       redrawScreen = 1;
     }
   } else if (button == objects.stsweepinc) {
-    if (sttest.sweeptime < 60) {
-      sttest.sweeptime++;
+    if (sttest.sweeptime < 595) {
+      sttest.sweeptime+=5;
+      redrawScreen = 1;
+    }  else if (sttest.sweeptime<600) {
+      sttest.sweeptime=600;
       redrawScreen = 1;
     }
   } else if (button == objects.stcenterinc) {
@@ -465,7 +477,13 @@ void action_ststop(lv_event_t *e) {
 
 void action_screen_loaded(lv_event_t *e) {
   lv_obj_t *screen = (lv_obj_t *)lv_event_get_target(e);
-  if (screen == objects.settings) {
-    lv_obj_scroll_to_y(objects.settings, 0, LV_ANIM_OFF);
+  if (screen == objects.main) {
+    lv_obj_scroll_to_y(objects.main, 0, LV_ANIM_OFF);
+  }  
+  if (screen == objects.programmer) {
+    lv_obj_scroll_to_y(objects.programmer, 0, LV_ANIM_OFF);
+  }
+  if (screen == objects.tester) {
+    lv_obj_scroll_to_y(objects.tester, 0, LV_ANIM_OFF);
   }
 }
