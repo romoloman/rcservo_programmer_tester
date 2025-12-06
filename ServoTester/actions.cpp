@@ -218,16 +218,16 @@ void action_dec_longpressed(lv_event_t *e) {
       redrawScreen = 1;
     }
   } else if (button == objects.stpulsemindec) {
-    if (sttest.min_pulse > 505) {
-      sttest.min_pulse -= 5;
+    if (sttest.min_pulse > 510) {
+      sttest.min_pulse -= 10;
       redrawScreen = 1;
     } else if (sttest.min_pulse > 500) {
       sttest.min_pulse = 500;
       redrawScreen = 1;
     }
   } else if (button == objects.stpulsemaxdec) {
-    if (sttest.max_pulse > 1505) {
-      sttest.max_pulse -= 5;
+    if (sttest.max_pulse > 1510) {
+      sttest.max_pulse -= 10;
       redrawScreen = 1;
     } else if (sttest.max_pulse > 1500) {
       sttest.max_pulse = 1500;
@@ -242,8 +242,8 @@ void action_dec_longpressed(lv_event_t *e) {
       redrawScreen = 1;
     }
   } else if (button == objects.stcenterdec) {
-    if (sttest.position > 505) {
-      sttest.position -= 5;
+    if (sttest.position > 510) {
+      sttest.position -= 10;
       redrawScreen = 1;
     } else if (sttest.position > 500) {
       sttest.position--;
@@ -394,16 +394,16 @@ void action_inc_longpressed(lv_event_t *e) {
       redrawScreen = 1;
     }
   } else if (button == objects.stpulsemininc) {
-    if (sttest.min_pulse < 1495) {
-      sttest.min_pulse+=5;
+    if (sttest.min_pulse < 1490) {
+      sttest.min_pulse+=10;
       redrawScreen = 1;
     } else if (sttest.min_pulse < 1500) {
       sttest.min_pulse=1500;
       redrawScreen = 1;
     }
   } else if (button == objects.stpulsemaxinc) {
-    if (sttest.max_pulse < 2495) {
-      sttest.max_pulse+=5;
+    if (sttest.max_pulse < 2490) {
+      sttest.max_pulse+=10;
       redrawScreen = 1;
     } else if (sttest.max_pulse < 2500) {
       sttest.max_pulse=2500;
@@ -418,13 +418,27 @@ void action_inc_longpressed(lv_event_t *e) {
       redrawScreen = 1;
     }
   } else if (button == objects.stcenterinc) {
-    if (sttest.position < 2495) {
-      sttest.position+=5;
+    if (sttest.position < 2490) {
+      sttest.position+=10;
       redrawScreen = 1;
     } else if (sttest.position < 2500) {
       sttest.position=2500;
       redrawScreen = 1;
     }
+  }
+};
+
+void action_setposition(lv_event_t * e) {
+  lv_obj_t *lbl = (lv_obj_t *)lv_event_get_target(e);
+  if (lbl == objects.stpulseminlbl) {
+    sttest.position=sttest.min_pulse;
+    redrawScreen = 1;
+  } else if (lbl == objects.stpulsemaxlbl) {
+    sttest.position=sttest.max_pulse;
+    redrawScreen = 1;
+  } else if (lbl == objects.stcenterlbl) {
+    sttest.position=1500;
+    redrawScreen = 1;
   }
 };
 

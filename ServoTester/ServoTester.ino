@@ -2,8 +2,8 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include "ui.h"
-#include "EEPROM.h"
-#include <ESP32Servo.h>
+#include <EEPROM.h>
+#include "Servo.h"
 Servo myservo;  // create servo object to control a servo
 #define LEDR 4
 #define LEDB 16
@@ -495,13 +495,6 @@ void setup() {
 	TxSerial.enableIntTx(false);
 */
   loadservodefault();
-
-  ESP32PWM::allocateTimer(0);
-  ESP32PWM::allocateTimer(1);
-  ESP32PWM::allocateTimer(2);
-  ESP32PWM::allocateTimer(3);
-  myservo.setPeriodHertz(50);  // Standard 50hz servo
-  
   redrawScreen = 1;
 }
 
@@ -535,12 +528,11 @@ void loop() {
   }
   if (ServoTestOn == 1) {
     if (ServoAttached == 0) {
-      myservo.attach(TXSERIAL_PIN, 500, 2500);
-      myservo.setTimerWidth(20);
+      myservo.attach(TXSERIAL_PIN, Servo::CHANNEL_NOT_ATTACHED, 10, 170, 500, 2500);
       ServoAttached = 1;
     }
     if (sttest.sweepon == 0) {
-      myservo.writeMicroseconds(sttest.position-1);
+      myservo.writeMicroseconds(sttest.position);
       delay(15);
     } else {
       if (SweepStarted == 0) {
@@ -570,12 +562,11 @@ void loop() {
               SweepDirection = 1;
             }
           }
-          myservo.writeMicroseconds((uint16_t)ServoPosition-1);
+          myservo.writeMicroseconds((uint16_t)ServoPosition);
         }
       }
     }
   } else if (ServoAttached == 1) {
-    myservo.release();
     myservo.detach();
     pinMode(TXSERIAL_PIN,INPUT_PULLUP);
     ServoAttached = 0;

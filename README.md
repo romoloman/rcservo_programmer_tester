@@ -29,8 +29,6 @@ Hardware Requirements
       TFT_eSPI - https://github.com/Bodmer/TFT_eSPI
       LVGL 9.4 - https://github.com/lvgl/lvgl
       XPT2046_Touchscreen - https://github.com/PaulStoffregen/XPT2046_Touchscreen
-    Library for servo driving under ESP32 (install from arduino library manager)
-      ESP32Servo - https://madhephaestus.github.io/ESP32Servo/annotated.html
     
     EEZ Studio to customize the interface
 
@@ -53,7 +51,7 @@ Hardware Requirements
 
     Connect the xt30 connector to a 2S LiPo battery (or even to a 4S NiMh for standard servos)
     With the touch pen turn around to the display to autocalibrate touch (need to be redone at any firwmare update)
-    Connect the servo to the servo connector Press "READ SERVO" to Read current conviguratio and Write servo to update
+    Connect the servo to the servo connector Press "READ SERVO" to Read current configuration and "WRITE SERVO" to update it.
     Swipe to the right to go to the servotester page, swipe left to go back to servo configuration page
     
 ## Contributing

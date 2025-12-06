@@ -934,6 +934,8 @@ void create_screen_tester() {
             objects.stpulseminlbl = obj;
             lv_obj_set_pos(obj, 215, 48);
             lv_obj_set_size(obj, 60, 20);
+            lv_obj_add_event_cb(obj, action_setposition, LV_EVENT_CLICKED, (void *)0);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
             lv_obj_set_style_align(obj, LV_ALIGN_DEFAULT, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -991,6 +993,8 @@ void create_screen_tester() {
             objects.stpulsemaxlbl = obj;
             lv_obj_set_pos(obj, 215, 78);
             lv_obj_set_size(obj, 60, 20);
+            lv_obj_add_event_cb(obj, action_setposition, LV_EVENT_CLICKED, (void *)0);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
             lv_obj_set_style_align(obj, LV_ALIGN_DEFAULT, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -1111,6 +1115,8 @@ void create_screen_tester() {
             objects.stcenterlbl = obj;
             lv_obj_set_pos(obj, 215, 168);
             lv_obj_set_size(obj, 60, 20);
+            lv_obj_add_event_cb(obj, action_setposition, LV_EVENT_CLICKED, (void *)0);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
             lv_obj_set_style_align(obj, LV_ALIGN_DEFAULT, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
