@@ -59,3 +59,9 @@ Hardware Requirements
 ## Contributing
 
 Contributions are welcome! If you have ideas for improving the project, bug fixes, or new features, feel free to open an issue or submit a pull request.
+
+## Screenshots 
+![Main page](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/mainpage.png)
+![Servo programmer](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/programmer.png)
+![Servo tester](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/tester.png)
+
