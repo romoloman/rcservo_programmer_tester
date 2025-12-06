@@ -65,3 +65,5 @@ Contributions are welcome! If you have ideas for improving the project, bug fixe
 ![Servo programmer](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/programmer.png)
 ![Servo tester](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/tester.png)
 
+You can exit from programmer or servo tester page by swiping to te left.
+
