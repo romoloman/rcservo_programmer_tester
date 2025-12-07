@@ -7,11 +7,15 @@ A project to use a "Cheap Yellow Display" (based on ESP32) as Servo Programmer/T
 This repository contains the code and instructions to turn a simple ESP32-based "Cheap Yellow Display" into a practical servo programmer and tester for RC Servo:
 The tester work on any servo while at the moment the programmer works only on PTK Servos (other are planned to be supported). 
 It allows you to change servo parameters as neutral angle, min/max PPM Values, Gain, Deadband and other.
+
 The tester allow to place the servo at any position as well to perform continuos span between a minimum and maximun angle
-Also it allows to measue an incoming PPM signal from an RX 
-The goal is to provide a practical, on field usable tool to program and test servos.
+
+It also allows to measure an incoming PPM signal from an RX displaying pulse width and frame frequency.
+
+The goal is to provide a cheap, practical, on field usable, tool to program and test servos and check RX signals.
+
 > [!WARNING]
-> Place a 1k Ohm resistor in series on the signal cable coming from the RX if you want to use Servo Meter functionalities
+> Place a 1k Ohm resistor in series on the signal cable coming from the RX if you want to use Pulse Meter functionalities
 
 ## Hardware Requirements
 
