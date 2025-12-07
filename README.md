@@ -71,8 +71,6 @@ Contributions are welcome! If you have ideas for improving the project, bug fixe
 ![Main page](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/mainpage.png)
 ![Servo programmer](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/programmer.png)
 
-![Servo tester](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/tester.png)
-![Pulse meter](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/pulsemeter.png)
 
 
 
