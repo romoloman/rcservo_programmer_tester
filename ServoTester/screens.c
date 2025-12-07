@@ -109,7 +109,7 @@ void create_screen_main() {
                     lv_obj_set_pos(obj, 0, 40);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_label_set_text(obj, "Signal Meter");
+                    lv_label_set_text(obj, "Pulse Meter");
                 }
             }
         }
