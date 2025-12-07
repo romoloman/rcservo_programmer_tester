@@ -59,6 +59,7 @@ If you want to customize the interface you will also need EEZ Studio
 - Connect the xt30 connector to a 2S LiPo battery (or even to a 4S NiMh for standard servos).
 - With the touch pen turn around to the display to autocalibrate touch (need to be redone at any firwmare update)
 - Connect the servo to the servo connector Press "READ SERVO" to Read current configuration and "WRITE SERVO" to update it.
+
 In servo tester page you can adjust value to your needs, by clinking on minimum pulse or maximum pulse values, the clicked value will be copied in the desidered servo position.
 
 If servo tester is started the servo will move immediately to the selected position. By clicking on the position value, the value will be reset to the center (1500).
