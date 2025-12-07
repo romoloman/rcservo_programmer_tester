@@ -22,6 +22,9 @@ extern void action_load_programmer(lv_event_t * e);
 extern void action_load_tester(lv_event_t * e);
 extern void action_setposition(lv_event_t * e);
 extern void action_load_meter(lv_event_t * e);
+extern void action_smstorecenter(lv_event_t * e);
+extern void action_smsetservotester(lv_event_t * e);
+extern void action_smresetvalues(lv_event_t * e);
 
 
 #ifdef __cplusplus

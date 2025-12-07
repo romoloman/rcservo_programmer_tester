@@ -126,24 +126,6 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data) {
   }
 }
 
-unsigned long lastInterruptTime;
-volatile unsigned long lastinput;
-volatile unsigned long pulseInValue;
-volatile unsigned long frameInValue;
-
-void IRAM_ATTR onPPMInterrupt() {
-  uint32_t now = micros();
-  uint32_t duration = now - lastInterruptTime;
-  lastInterruptTime = now;
-  if (duration<3000) {
-    pulseInValue=duration;
-    lastinput=millis();
-  } else if (duration<25000) {
-    frameInValue=duration+pulseInValue;
-    lastinput=millis();
-  }
-}
-
 lv_indev_t *indev;      //Touchscreen input device
 uint8_t *draw_buf;      //draw_buf is allocated on heap otherwise the static area is too big on ESP32 at compile
 uint32_t lastTick = 0;  //Used to track the tick timer
@@ -164,7 +146,6 @@ struct servostruct {
   uint8_t inversion;
   uint8_t softstart;
 };
-
 servostruct servo;
 servostruct servoquery;
 
@@ -175,8 +156,31 @@ struct stteststruct {
   uint8_t sweepon;
   uint16_t position;
 };
-
 stteststruct sttest;
+
+struct pulsemeterstruct {
+  uint16_t min_pulse;
+  uint16_t max_pulse;
+  uint16_t center_pulse;
+  unsigned long lastinput;
+  unsigned long pulseInValue;
+  unsigned long frameInValue;
+};
+volatile pulsemeterstruct pulseMeter;
+
+unsigned long lastInterruptTime;
+void IRAM_ATTR onPPMInterrupt() {
+  uint32_t now = micros();
+  uint32_t duration = now - lastInterruptTime;
+  lastInterruptTime = now;
+  if (duration<3000) {
+    pulseMeter.pulseInValue=duration;
+    pulseMeter.lastinput=millis();
+  } else if (duration<25000) {
+    pulseMeter.frameInValue=duration+pulseMeter.pulseInValue;
+    pulseMeter.lastinput=millis();
+  }
+}
 
 void loadservodefault() {
   servo.min_angle = 100;
@@ -453,33 +457,21 @@ void setup() {
   int address = 0;
   int value;
   value = EEPROM.readUInt(address);
-#if DEBUG
-  Serial.println(value);
-#endif
   if (value > 100) {
     touchScreenMinimumX = value;
   }
   address += sizeof(unsigned int);
   value = EEPROM.readUInt(address);
-#if DEBUG
-  Serial.println(value);
-#endif
   if (value > 100) {
     touchScreenMaximumX = value;
   }
   address += sizeof(unsigned int);
   value = EEPROM.readUInt(address);
-#if DEBUG
-  Serial.println(value);
-#endif
   if (value > 100) {
     touchScreenMinimumY = value;
   }
   address += sizeof(unsigned int);
   value = EEPROM.readUInt(address);
-#if DEBUG
-  Serial.println(value);
-#endif
   if (value > 100) {
     touchScreenMaximumY = value;
   }
@@ -606,26 +598,41 @@ void loop() {
   if (MeterOn == 1) {
     if (MeterAttached==0) {
       attachInterrupt(digitalPinToInterrupt(READ_PIN), onPPMInterrupt, CHANGE);
+      pulseMeter.min_pulse=2500;
+      pulseMeter.max_pulse=0;
+      pulseMeter.center_pulse=0;      
       MeterAttached=1;
     }
-    if ((now - lastinput) > 200) {
-      pulseInValue = 0;
+    if ((now - pulseMeter.lastinput) > 200) {
+      pulseMeter.pulseInValue = 0;
+      pulseMeter.frameInValue = 0;
+    } 
+    if (pulseMeter.pulseInValue!=0) {
+      if (pulseMeter.pulseInValue>pulseMeter.max_pulse) {
+        pulseMeter.max_pulse=pulseMeter.pulseInValue;
+        sprintf(buffer, "%d", pulseMeter.pulseInValue);
+        lv_label_set_text(objects.metermaxvaluelbl, buffer);
+      }
+      if (pulseMeter.pulseInValue<pulseMeter.min_pulse) {
+        pulseMeter.min_pulse=pulseMeter.pulseInValue;
+        sprintf(buffer, "%d", pulseMeter.pulseInValue);
+        lv_label_set_text(objects.meterminvaluelbl, buffer);
+      }
     }
     if ((now - lastinputredraw) > 100ull) {
-      if (pulseInValue != 0) {
-        sprintf(buffer, "%d", pulseInValue);
+      if (pulseMeter.pulseInValue != 0) {
+        sprintf(buffer, "%d", pulseMeter.pulseInValue);
         lv_label_set_text(objects.pulsevaluelbl, buffer);
       } else {
         lv_label_set_text(objects.pulsevaluelbl, "----");
       }
-      if (frameInValue != 0) {
-        sprintf(buffer, "%0.0f", round(1000000.0/frameInValue));
+      if (pulseMeter.frameInValue != 0) {
+        sprintf(buffer, "%0.0f", round(1000000.0/pulseMeter.frameInValue));
         lv_label_set_text(objects.frequencyvaluelbl, buffer);
       } else {
         lv_label_set_text(objects.frequencyvaluelbl, "---");
       }
       lastinputredraw = now;
-      redrawScreen = 1;
     }
   } else {
     if (MeterAttached==1) {

@@ -54,12 +54,21 @@ public:
     static constexpr int DEFAULT_MIN_ANGLE = 0;
     static constexpr int DEFAULT_MAX_ANGLE = 180;
 
-    static const int DEFAULT_MIN_PULSE_WIDTH_US = 544;   // the shortest pulse sent to a servo
-    static const int DEFAULT_MAX_PULSE_WIDTH_US = 2400;  // the longest pulse sent to a servo
+    static const int DEFAULT_MIN_PULSE_WIDTH_US = 500;   // the shortest pulse sent to a servo
+    static const int DEFAULT_MAX_PULSE_WIDTH_US = 2500;  // the longest pulse sent to a servo
 
     static const int DEFAULT_FREQUENCY = 50;
 
-    static const int TIMER_RESOLUTION = 16;
+#ifdef ESP_ARDUINO_VERSION_MAJOR
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+    static constexpr int TIMER_RESOLUTION = (16 < SOC_LEDC_TIMER_BIT_WIDTH) ? 16 : SOC_LEDC_TIMER_BIT_WIDTH;
+#else
+    static constexpr int TIMER_RESOLUTION = (16 < SOC_LEDC_TIMER_BIT_WIDE_NUM) ? 16 : SOC_LEDC_TIMER_BIT_WIDE_NUM; //   std::min(16, SOC_LEDC_TIMER_BIT_WIDE_NUM);
+#endif
+#else 
+    static constexpr int TIMER_RESOLUTION = (16 < SOC_LEDC_TIMER_BIT_WIDE_NUM) ? 16 : SOC_LEDC_TIMER_BIT_WIDE_NUM; //   std::min(16, SOC_LEDC_TIMER_BIT_WIDE_NUM);
+#endif
+
     static const int PERIOD_TICKS = (1 << TIMER_RESOLUTION) - 1;
 
     static const int CHANNEL_NOT_ATTACHED = -1;

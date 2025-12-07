@@ -32,6 +32,17 @@ struct stteststruct {
 
 extern stteststruct sttest;
 
+struct pulsemeterstruct {
+  uint16_t min_pulse;
+  uint16_t max_pulse;
+  uint16_t center_pulse;
+  unsigned long lastinput;
+  unsigned long pulseInValue;
+  unsigned long frameInValue;
+};
+
+extern volatile pulsemeterstruct pulseMeter;
+
 extern uint readServo;
 extern uint writeServo;
 extern uint ServoTestOn;
@@ -510,3 +521,30 @@ void action_screen_loaded(lv_event_t *e) {
     lv_obj_scroll_to_y(objects.tester, 0, LV_ANIM_OFF);
   }
 }
+
+void action_smstorecenter(lv_event_t *e) {
+  char buffer[20];
+  if (pulseMeter.pulseInValue != 0) {
+    pulseMeter.center_pulse = pulseMeter.pulseInValue;
+    sprintf(buffer, "%d", pulseMeter.pulseInValue);
+    lv_label_set_text(objects.metermidvaluelbl, buffer);
+  }
+};
+
+void action_smsetservotester(lv_event_t *e) {
+  if ((pulseMeter.center_pulse != 0) && (pulseMeter.min_pulse != 2500) && (pulseMeter.max_pulse != 0)) {
+    sttest.min_pulse = pulseMeter.min_pulse;
+    sttest.max_pulse = pulseMeter.max_pulse;
+    sttest.position = pulseMeter.center_pulse;
+    redrawScreen = 1;
+  }
+};
+
+void action_smresetvalues(lv_event_t *e) {
+  pulseMeter.center_pulse = 0;
+  pulseMeter.min_pulse = 2500;
+  pulseMeter.max_pulse = 0;
+  lv_label_set_text(objects.meterminvaluelbl, "----");
+  lv_label_set_text(objects.metermidvaluelbl, "----");
+  lv_label_set_text(objects.metermaxvaluelbl, "----");
+};

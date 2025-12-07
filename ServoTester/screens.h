@@ -76,6 +76,12 @@ typedef struct _objects_t {
     lv_obj_t *pulsevalueunits;
     lv_obj_t *frequencyvaluelbl;
     lv_obj_t *frequencyvalueunits;
+    lv_obj_t *pmsetcenter_bt;
+    lv_obj_t *meterminvaluelbl;
+    lv_obj_t *metermidvaluelbl;
+    lv_obj_t *metermaxvaluelbl;
+    lv_obj_t *pmsetst_bt;
+    lv_obj_t *pmreset_bt;
 } objects_t;
 
 extern objects_t objects;
