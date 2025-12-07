@@ -10,7 +10,7 @@ It allows you to change servo parameters as neutral angle, min/max PPM Values, G
 
 The tester allow to place the servo at any position as well to perform continuos span between a minimum and maximun angle
 
-It also allows to measure an incoming PPM signal from an RX displaying pulse width and frame frequency.
+It also allows to measure an incoming PPM signal from an RX displaying pulse width and frame frequency and also store minimum and maximum values of PPM pulses received
 
 The goal is to provide a cheap, practical, on field usable, tool to program and test servos and check RX signals.
 
@@ -73,6 +73,5 @@ Contributions are welcome! If you have ideas for improving the project, bug fixe
 
 ![Servo tester](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/servotester.png)
 ![Pulse meter](https://github.com/romoloman/rcservo_programmer_tester/blob/main/Images/pulsemeter.png)
-
 
 
