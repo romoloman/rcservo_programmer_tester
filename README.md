@@ -31,13 +31,13 @@ If tou decide to print the box for the 2.8 Display you will need also:
 ## Software Requirements
 
 Arduino IDE
-Esp32 Framework for arduino ide (works up to version up to 3.3.0. Version after 3.3.0 seem to have some issues with ESP32Servo library)
+Esp32 Framework for arduino ide (tested up to version up to 3.3.4).
 Necessary libraries for display management (install all of them from arduino library manager):
-- TFT_eSPI - https://github.com/Bodmer/TFT_eSPI
-- LVGL 9.4 - https://github.com/lvgl/lvgl
-- XPT2046_Touchscreen - https://github.com/PaulStoffregen/XPT2046_Touchscreen
+- TFT_eSPI (V2.5.43) - https://github.com/Bodmer/TFT_eSPI
+- LVGL (9.4) - https://github.com/lvgl/lvgl
+- XPT2046_Touchscreen (V1.4) - https://github.com/PaulStoffregen/XPT2046_Touchscreen
 
-If you want to customize the interface you will also need EEZ Studio
+If you want to customize the interface you will also need EEZ Studio - https://github.com/eez-open/studio
 
 ## Installation and Setup
 
