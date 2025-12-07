@@ -73,6 +73,9 @@ typedef struct _objects_t {
     lv_obj_t *obj5;
     lv_obj_t *obj6;
     lv_obj_t *pulsevaluelbl;
+    lv_obj_t *pulsevalueunits;
+    lv_obj_t *frequencyvaluelbl;
+    lv_obj_t *frequencyvalueunits;
 } objects_t;
 
 extern objects_t objects;

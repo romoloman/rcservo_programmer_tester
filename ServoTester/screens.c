@@ -20,6 +20,7 @@ void create_screen_main() {
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 320, 240);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_margin_right(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     {
         lv_obj_t *parent_obj = obj;
         {
@@ -1270,11 +1271,41 @@ void create_screen_meter() {
             // pulsevaluelbl
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.pulsevaluelbl = obj;
-            lv_obj_set_pos(obj, 40, 94);
-            lv_obj_set_size(obj, 240, LV_SIZE_CONTENT);
+            lv_obj_set_pos(obj, 50, 80);
+            lv_obj_set_size(obj, 147, LV_SIZE_CONTENT);
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_label_set_text(obj, "1500 us");
+            lv_label_set_text(obj, "1500");
+        }
+        {
+            // pulsevalueunits
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.pulsevalueunits = obj;
+            lv_obj_set_pos(obj, 212, 80);
+            lv_obj_set_size(obj, 72, LV_SIZE_CONTENT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "us");
+        }
+        {
+            // frequencyvaluelbl
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.frequencyvaluelbl = obj;
+            lv_obj_set_pos(obj, 50, 155);
+            lv_obj_set_size(obj, 147, LV_SIZE_CONTENT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "50");
+        }
+        {
+            // frequencyvalueunits
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.frequencyvalueunits = obj;
+            lv_obj_set_pos(obj, 211, 155);
+            lv_obj_set_size(obj, 73, LV_SIZE_CONTENT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "Hz");
         }
     }
     

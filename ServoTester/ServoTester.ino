@@ -126,6 +126,24 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data) {
   }
 }
 
+unsigned long lastInterruptTime;
+volatile unsigned long lastinput;
+volatile unsigned long pulseInValue;
+volatile unsigned long frameInValue;
+
+void IRAM_ATTR onPPMInterrupt() {
+  uint32_t now = micros();
+  uint32_t duration = now - lastInterruptTime;
+  lastInterruptTime = now;
+  if (duration<3000) {
+    pulseInValue=duration;
+    lastinput=millis();
+  } else if (duration<25000) {
+    frameInValue=duration+pulseInValue;
+    lastinput=millis();
+  }
+}
+
 lv_indev_t *indev;      //Touchscreen input device
 uint8_t *draw_buf;      //draw_buf is allocated on heap otherwise the static area is too big on ESP32 at compile
 uint32_t lastTick = 0;  //Used to track the tick timer
@@ -503,9 +521,7 @@ unsigned long now;
 unsigned long lastsweep;
 unsigned long nowmicros;
 unsigned long lastservo;
-unsigned long lastinput;
 unsigned long lastinputredraw;
-long pulseInValue;
 
 void loop() {
   // Main program loop
@@ -534,7 +550,7 @@ void loop() {
   }
 
   if (MeterOn == 1) {
-    ServoTestOn=0;
+    ServoTestOn = 0;
   }
 
   if (ServoTestOn == 1) {
@@ -588,24 +604,33 @@ void loop() {
     delay(100);
   }
   if (MeterOn == 1) {
-    pulseInValue = pulseIn(READ_PIN, HIGH, 25000);
-    if (pulseInValue>=400 && pulseInValue<2600) {
-      lastinput=now;
-    } else {
-      pulseInValue=0;
+    if (MeterAttached==0) {
+      attachInterrupt(digitalPinToInterrupt(READ_PIN), onPPMInterrupt, CHANGE);
+      MeterAttached=1;
     }
     if ((now - lastinput) > 200) {
       pulseInValue = 0;
     }
     if ((now - lastinputredraw) > 100ull) {
       if (pulseInValue != 0) {
-        sprintf(buffer, "%d us", pulseInValue);
+        sprintf(buffer, "%d", pulseInValue);
         lv_label_set_text(objects.pulsevaluelbl, buffer);
       } else {
-        lv_label_set_text(objects.pulsevaluelbl, "---- us");
+        lv_label_set_text(objects.pulsevaluelbl, "----");
       }
-      lastinputredraw=now;
+      if (frameInValue != 0) {
+        sprintf(buffer, "%0.0f", round(1000000.0/frameInValue));
+        lv_label_set_text(objects.frequencyvaluelbl, buffer);
+      } else {
+        lv_label_set_text(objects.frequencyvaluelbl, "---");
+      }
+      lastinputredraw = now;
       redrawScreen = 1;
+    }
+  } else {
+    if (MeterAttached==1) {
+      detachInterrupt(digitalPinToInterrupt(READ_PIN));
+      MeterAttached=0;
     }
   }
   if (readServo == 1) {
