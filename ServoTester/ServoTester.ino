@@ -3,6 +3,7 @@
 #include <TFT_eSPI.h>
 #include "ui.h"
 #include <EEPROM.h>
+#include "esp32-rmt-pwm-reader.h"
 #include "Servo.h"
 Servo myservo;  // create servo object to control a servo
 #define LEDR 4
@@ -14,6 +15,8 @@ Servo myservo;  // create servo object to control a servo
 #define TXSERIAL_PIN 22  // pin for trasmitting command to servo and PWM signal
 #define IGNRXSER_PIN 27  // unused pin for serial rx
 #define READ_PIN 35      // pin used to read answers from SERVO
+
+const uint8_t channelPins[]={READ_PIN};
 
 // Set the following to true for serial debugging
 #define DEBUG false
@@ -167,20 +170,6 @@ struct pulsemeterstruct {
   unsigned long frameInValue;
 };
 volatile pulsemeterstruct pulseMeter;
-
-unsigned long lastInterruptTime;
-void IRAM_ATTR onPPMInterrupt() {
-  uint32_t now = micros();
-  uint32_t duration = now - lastInterruptTime;
-  lastInterruptTime = now;
-  if (duration<3000) {
-    pulseMeter.pulseInValue=duration;
-    pulseMeter.lastinput=millis();
-  } else if (duration<25000) {
-    pulseMeter.frameInValue=duration+pulseMeter.pulseInValue;
-    pulseMeter.lastinput=millis();
-  }
-}
 
 void loadservodefault() {
   servo.min_angle = 100;
@@ -597,11 +586,23 @@ void loop() {
   }
   if (MeterOn == 1) {
     if (MeterAttached==0) {
-      attachInterrupt(digitalPinToInterrupt(READ_PIN), onPPMInterrupt, CHANGE);
+      pwm_reader_init(channelPins, 1);
+      pwm_set_failsafe(0, false);
+      pwm_set_auto_zero(0, true);     // set channel to auto zero
+      pwm_set_auto_min_max(0, true);  // set channel to auto min/max calibration
+      pwm_reader_begin();      
       pulseMeter.min_pulse=2500;
       pulseMeter.max_pulse=0;
       pulseMeter.center_pulse=0;      
       MeterAttached=1;
+    }
+    if (pwm_get_state(0)==PwmState::STABLE) {
+      pulseMeter.pulseInValue=pwm_get_rawPwm(0);
+      if (pulseMeter.pulseInValue==-1) {
+        pulseMeter.pulseInValue=0;
+      }
+      pulseMeter.frameInValue=pwm_get_frequency(0);
+      pulseMeter.lastinput=now;
     }
     if ((now - pulseMeter.lastinput) > 200) {
       pulseMeter.pulseInValue = 0;
@@ -627,7 +628,7 @@ void loop() {
         lv_label_set_text(objects.pulsevaluelbl, "----");
       }
       if (pulseMeter.frameInValue != 0) {
-        sprintf(buffer, "%0.0f", round(1000000.0/pulseMeter.frameInValue));
+        sprintf(buffer, "%d", pulseMeter.frameInValue);
         lv_label_set_text(objects.frequencyvaluelbl, buffer);
       } else {
         lv_label_set_text(objects.frequencyvaluelbl, "---");
@@ -636,7 +637,7 @@ void loop() {
     }
   } else {
     if (MeterAttached==1) {
-      detachInterrupt(digitalPinToInterrupt(READ_PIN));
+      pwm_cleanup();
       MeterAttached=0;
     }
   }
