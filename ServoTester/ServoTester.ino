@@ -548,7 +548,7 @@ void loop() {
         Serial.println("Doing Servo Sweep");
 #endif
         ServoPosition = (sttest.min_pulse);
-        myservo.writeMicroseconds((uint16_t)ServoPosition);
+        myservo.writeMicroseconds((uint16_t)round(ServoPosition));
         delay(200);
         SweepStarted = 1;
         SweepDirection = 1;
