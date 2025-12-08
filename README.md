@@ -39,7 +39,7 @@ Necessary libraries for display management (install all of them from arduino lib
 
 If you want to customize the interface you will also need EEZ Studio - https://github.com/eez-open/studio
 
-Software includes copied of The following libraries adapted to work with ESP32 Framework V3:
+Software includes copies of the following libraries adapted to work with ESP32 Framework V3:
 - ServoESP32 library from aluni3 - https://github.com/alunit3/ServoESP32
 - esp32-rmt-pwm-reader from rewegit - https://github.com/rewegit/esp32-rmt-pwm-reader  
  
