@@ -1,11 +1,13 @@
 /**
 *********************************************************************************
-* @file:	esp32-rmt-pwm-reader.h
-* @author:	R.W.
-* @date:	28.04.23
-* @brief:
+* @file:  esp32-rmt-pwm-reader.h
+* @originalauthor:  R.W.
+* @author:  R.M.
+* @date:  08.12.25
+* @brief:  Compatible with both ESP-IDF v4 and v5 RMT API
 * @history: 20.07.23 rw compatibility with older versions of espressif framework
 *                       especially espressif32@3.2.0 for esp32 Soundcontroller
+*           XX.XX.XX Added ESP-IDF v5 support with automatic version detection
 *********************************************************************************
 **/
 
@@ -13,57 +15,55 @@
 #define esp32_rmt_pwm_reader_h
 
 #include <Arduino.h>
-#include <esp_timer.h>       // for meassure time
-
-#include "driver/rmt.h"      // for PWM signal detection
-#include "soc/rmt_reg.h"     // for rmt channel status
-#include "soc/rmt_struct.h"  // for rmt ir
-
+#include <esp_timer.h>    // for measure time
 #include "driver/gpio.h"  // for direct gpio access
 
-#ifndef GPIO_NUM_NC  // not defined in older versions of gpio.h
-#define GPIO_NUM_NC -1
-
-#endif  //GPIO_NUM_NC
-
-#if ESP_IDF_VERSION_MAJOR >= 5
-// copied from rmt_private.h with slight changes to match the idf 4.x syntax
-typedef struct {
-    struct {
-        rmt_item32_t data32[SOC_RMT_MEM_WORDS_PER_CHANNEL];
-    } chan[SOC_RMT_CHANNELS_PER_GROUP];
-} rmt_block_mem_t;
-
-// RMTMEM address is declared in <target>.peripherals.ld
-extern rmt_block_mem_t RMTMEM;
+// Automatic version detection and include appropriate headers
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+// ESP-IDF v5.x - Use new RMT driver
+#define USE_RMT_V5_API
+#include "driver/rmt_rx.h"
+#include "driver/rmt_types.h"
+#include "hal/rmt_types.h"
+#else
+// ESP-IDF v4.x - Use legacy RMT driver
+#include "driver/rmt.h"
+#include "soc/rmt_reg.h"
+#include "soc/rmt_struct.h"
 #endif
 
-// #define PIN_TST GPIO_NUM_4
+#ifndef GPIO_NUM_NC
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+#define GPIO_NUM_NC ((gpio_num_t)-1)
+#else
+#define GPIO_NUM_NC -1
+#endif
+#endif
 
-
-#include "esp32-hal-log.h"  // loglevel ist set as build_flags = -DCORE_DEBUG_LEVEL in platformio.ini
+// Logging support
+#include "esp32-hal-log.h"
 static const char *TAG = "rmt_pwm_reader";
 
 // defines for pulse calculations
 #define STABLE_COUNTER 10  // periods that must be in limit before status changes from UNSTABLE to STABLE
 
 #define PULSE_MAX_VALID 2700
-#define IDLE_TRESHOLD (PULSE_MAX_VALID + 500)  // Receiving is considered finished when IDLE_TRESHOLD us no edge change (ir) occurs.
+#define IDLE_TRESHOLD (PULSE_MAX_VALID + 500)  // Receiving is considered finished when IDLE_TRESHOLD us no edge change occurs.
 
-#define PERIOD_MIN_VALID 25000                 // -> 40Hz min pwm frequency
-#define PERIOD_MAX_VALID 12500                 // -> 80Hz max pwm frequency
+#define PERIOD_MIN_VALID 25000  // -> 40Hz min pwm frequency
+#define PERIOD_MAX_VALID 12500  // -> 80Hz max pwm frequency
 
-#define AUTO_ZERO_CALIBRATION true             // default for auto zero calibration
-#define ZERO_CALC_LOWER_LIMIT 20               // lower limit in %. current pulse in us - ZERO_CALC_LOWER_LIMIT
-#define ZERO_CALC_UPPER_LIMIT 20               // upper limit in %. current pulse in us + ZERO_CALC_UPPER_LIMIT
+#define AUTO_ZERO_CALIBRATION true  // default for auto zero calibration
+#define ZERO_CALC_LOWER_LIMIT 20    // lower limit in %. current pulse in us - ZERO_CALC_LOWER_LIMIT
+#define ZERO_CALC_UPPER_LIMIT 20    // upper limit in %. current pulse in us + ZERO_CALC_UPPER_LIMIT
 
-#define SCALE_PULSE_MIN 300                   // scaled pulse min (default value)
-#define SCALE_PULSE_NEUTRAL 1500               // scaled pulse neutral (default value)
-#define SCALE_PULSE_MAX 2000                   // scaled pulse max (default value)
+#define SCALE_PULSE_MIN 300       // scaled pulse min (default value)
+#define SCALE_PULSE_NEUTRAL 1500  // scaled pulse neutral (default value)
+#define SCALE_PULSE_MAX 2000      // scaled pulse max (default value)
 
-#define AUTO_MIN_MAX_CALIBRATION true          // default for auto min/max calibration (default value)
-#define MIN_MAX_CALIBRATE_LOWER_LIMIT 20       // lower limit in % based on calculated pulse_min
-#define MIN_MAX_CALIBRATE_UPPER_LIMIT 20       // upper limit in % based on calculated pulse_max
+#define AUTO_MIN_MAX_CALIBRATION true     // default for auto min/max calibration (default value)
+#define MIN_MAX_CALIBRATE_LOWER_LIMIT 20  // lower limit in % based on calculated pulse_min
+#define MIN_MAX_CALIBRATE_UPPER_LIMIT 20  // upper limit in % based on calculated pulse_max
 /*
 This means the distance between neutral and min/max.
 In the standard, this is calculated from (max - min)/2.
@@ -95,47 +95,49 @@ maxLowerLimit = (1300 + 500) + (1300 + 500) * 20%) = 2160
 /*!
  * @brief states for SM
  */
-enum class PwmState { NOT_CONNECTED,
-                      UNSTABLE,
-                      STABLE };
+enum class PwmState {
+  NOT_CONNECTED,
+  UNSTABLE,
+  STABLE
+};
 
 /*!
  * @brief Configuration of a channel
  */
 struct pwm_config {
-    uint16_t pulse_min;      ///< Minimum valid pulse width
-    uint16_t pulse_max;      ///< Maximum valid pulse width
-    uint16_t pulse_neutral;  ///< Neutral pulse width
-    uint16_t period_max;     ///< Maximum period (fmin = 20Hz)(needed for FSM to detect NO_SIGNAL)
-    boolean auto_zero;       ///< if true, auto calculate pulse_neutral if state change from NOT_CONNECTED to STABLE default is AUTO_ZERO_CALIBRATION
-    boolean auto_min_max;    ///< if true, auto calculate pulse_min/max if state change from NOT_CONNECTED to STABLE default is AUTO_MIN_MAX_CALIBRATION
-    boolean failsafe;        ///< if true and state not STABLE get impulse returns pulse_neutral default is GET_FAILESAFE
+  uint16_t pulse_min;      ///< Minimum valid pulse width
+  uint16_t pulse_max;      ///< Maximum valid pulse width
+  uint16_t pulse_neutral;  ///< Neutral pulse width
+  uint16_t period_max;     ///< Maximum period (fmin = 20Hz)(needed for FSM to detect NO_SIGNAL)
+  boolean auto_zero;       ///< if true, auto calculate pulse_neutral if state change from NOT_CONNECTED to STABLE default is AUTO_ZERO_CALIBRATION
+  boolean auto_min_max;    ///< if true, auto calculate pulse_min/max if state change from NOT_CONNECTED to STABLE default is AUTO_MIN_MAX_CALIBRATION
+  boolean failsafe;        ///< if true and state not STABLE get impulse returns pulse_neutral default is GET_FAILESAFE
 };
 
 /*!
  * @brief Data for a PWM channel
  */
 struct pwm_data {
-    volatile int64_t lastIr = 0;               ///< Timestamp of last interrupt (IDLE_TRESHOLD after falling edge)
-    volatile uint32_t highus = 0;              ///< Pulse width of the current pulse
-    volatile uint32_t lastTotalus = 0;         ///< width of the last period in us (needed for FSM to detect jitter)
-    volatile uint32_t totalus = 0;             ///< width of the current period in us
-    volatile uint16_t frq = 0;                 ///< Frequency of the current pulse in Hz
-    uint8_t stableCounter = 0;                 ///< Counter for detecting stability
-    uint16_t auto_pulse_min = 0;               ///< detectet min pulse width in the first 5 sec after first STABLE
-    uint16_t auto_pulse_max = 0;               ///< detectet max pulse width in the first 5 sec after first STABLE
-    int64_t stable_time = 0;                   ///< Timestamp of last STABLE state
-    PwmState state = PwmState::NOT_CONNECTED;  ///< State of the channel (NOT_CONNECTED, UNSTABLE, or STABLE)
+  volatile int64_t lastIr = 0;               ///< Timestamp of last interrupt (IDLE_TRESHOLD after falling edge)
+  volatile uint32_t highus = 0;              ///< Pulse width of the current pulse
+  volatile uint32_t lastTotalus = 0;         ///< width of the last period in us (needed for FSM to detect jitter)
+  volatile uint32_t totalus = 0;             ///< width of the current period in us
+  volatile uint16_t frq = 0;                 ///< Frequency of the current pulse in Hz
+  uint8_t stableCounter = 0;                 ///< Counter for detecting stability
+  uint16_t auto_pulse_min = 0;               ///< detected min pulse width in the first 5 sec after first STABLE
+  uint16_t auto_pulse_max = 0;               ///< detected max pulse width in the first 5 sec after first STABLE
+  int64_t stable_time = 0;                   ///< Timestamp of last STABLE state
+  PwmState state = PwmState::NOT_CONNECTED;  ///< State of the channel (NOT_CONNECTED, UNSTABLE, or STABLE)
 };
 
 /*!
  * @brief Object representing a PWM channel
  */
 typedef struct pwm_channel {
-    uint8_t pin;               ///< GPIO pin for the channel
-    uint8_t channel;           ///< RMT channel for the channel
-    struct pwm_config config;  ///< Configuration for the channel
-    struct pwm_data data;      ///< Data for the channel
+  uint8_t pin;               ///< GPIO pin for the channel
+  uint8_t channel;           ///< RMT channel for the channel
+  struct pwm_config config;  ///< Configuration for the channel
+  struct pwm_data data;      ///< Data for the channel
 } pwm_channel_t;
 
 /*!
@@ -149,10 +151,19 @@ void pwm_reader_init(const uint8_t channelPins[], const int numberOfPins);
  * @brief configure rmt_channels and start reading
  * @return
  *     - ESP_OK Success
- *     - ESP_ERR_INVALID_ARG Function pointer error.
- *     - ESP_FAIL System driver installed, can not register ISR handler for RMT
+ *     - ESP_ERR_INVALID_ARG Invalid argument
+ *     - ESP_ERR_NO_MEM Out of memory
+ *     - ESP_FAIL Other failures
  */
 esp_err_t pwm_reader_begin();
+
+/*!
+ * @brief deregister channels, delete pwm_channels, cleanup resources
+ * @return 
+ *     - ESP_OK Success
+ *     - ESP_FAIL Failure during cleanup
+ */
+esp_err_t pwm_cleanup();
 
 /*!
  * @brief Returns the object representing all PWM channels for debug
@@ -181,7 +192,6 @@ const pwm_config *pwm_get_channel_config(const uint8_t channel);
  */
 void pwm_set_channel_rmtChannel(const uint8_t channel, const uint8_t rmtChannel);
 
-
 /*!
  * @brief configure channel pulse_min
  * @param channel to configure
@@ -192,35 +202,35 @@ void pwm_set_channel_pulse_min(const uint8_t channel, const uint16_t pulse_min);
 /*!
  * @brief configure channel pulse_max
  * @param channel to configure
- * @param pulse_max new config.pulse_min
+ * @param pulse_max new config.pulse_max
  */
 void pwm_set_channel_pulse_max(const uint8_t channel, const uint16_t pulse_max);
 
 /*!
  * @brief configure channel pulse_neutral
  * @param channel to configure
- * @param pulse_neutral new config.pulse_min
+ * @param pulse_neutral new config.pulse_neutral
  */
 void pwm_set_channel_pulse_neutral(const uint8_t channel, const uint16_t pulse_neutral);
 
 /*!
  * @brief configure channel period_max
  * @param channel to configure
- * @param pulse_min new config.period_max
+ * @param period_max new config.period_max
  */
 void pwm_set_channel_period_max(const uint8_t channel, const uint16_t period_max);
 
 /*!
  * @brief configure channel auto_zero
  * @param channel to configure
- * @param pulse_min new config.auto_zero
+ * @param auto_zero new config.auto_zero
  */
 void pwm_set_auto_zero(const uint8_t channel, const boolean auto_zero);
 
 /*!
  * @brief configure channel auto_min_max
  * @param channel to configure
- * @param pulse_min new config.auto_min_max
+ * @param auto_min_max new config.auto_min_max
  */
 void pwm_set_auto_min_max(const uint8_t channel, const boolean auto_min_max);
 
@@ -239,20 +249,20 @@ void pwm_set_failsafe(const uint8_t channel, const boolean failsafe);
 void pwm_set_state(const uint8_t channel, const PwmState state);
 
 /*!
- * @brief Returns the last impuls width
+ * @brief Returns the last impulse width
  * @param channel The channel number
- * @return last impuls width for the channel in us
+ * @return last impulse width for the channel in us
  *         if data->state != STABLE and config.failsafe==true -> pulse_neutral
  *         if data->state != STABLE and config.failsafe==false -> -1
  */
 const int32_t pwm_get_rawPwm(const uint8_t channel);
 
 /*!
- * @brief Returns the last scaled impuls width.  Linear scaling is performed.
+ * @brief Returns the last scaled impulse width. Linear scaling is performed.
  *        If the pulse duration <= pulse_neutral, scaling is performed between pulse_min and pulse_neutral.
  *        If the pulse duration > pulse_neutral, scaling is performed between pulse_neutral and pulse_max.
  * @param channel The channel number
- * @return last impuls width for the channel in us
+ * @return last impulse width for the channel in us
  *         if data->state != STABLE and config.failsafe==true -> pulse_neutral
  *         if data->state != STABLE and config.failsafe==false -> -1
  */
@@ -260,10 +270,10 @@ const int32_t pwm_get_scaledPwm(const uint8_t channel);
 
 /*!
  * @brief Get the offset of the channel to channel0
- *        If state of Channel or Channel0 != STABLE returns -1 or freq of Channel0 != freq of Channel
+ *        If state of Channel or Channel0 != STABLE returns 0 or freq of Channel0 != freq of Channel
  *        If Channel = 0 returns 0
  * @param channel The channel number
- * @return offset in us between channel and channel0 or -1 if state != STABLE or 0 if channel == 0
+ * @return offset in us between channel and channel0 or 0 if state != STABLE or 0 if channel == 0
  */
 const int32_t pwm_get_offset(const uint8_t channel);
 
@@ -284,23 +294,17 @@ const char *pwm_get_state_name(const uint8_t channel);
 /*!
  * @brief Returns the actual frequency for a PWM channel
  * @param channel The channel number
- * @return The frequency of the channel
+ * @return The frequency of the channel in Hz
  */
 const uint16_t pwm_get_frequency(const uint8_t channel);
 
 /*!
- * @brief calculate duty cycle baset on pulse_min, pulse_max, pulse_current
+ * @brief calculate duty cycle based on pulse_min, pulse_max, pulse_current
  * @param pulse_min  Minimum valid pulse width
  * @param pulse_max  Maximum valid pulse width
  * @param pulse_current pulse width to calculate duty cycle
- * @return The calculated duty cycle
+ * @return The calculated duty cycle in percentage (0-100)
  */
 const float_t pwm_get_rc_duty_cycle(const uint16_t pulse_min, const uint16_t pulse_max, const uint16_t pulse_current);
-
-/*!
- * @brief deregister isr, delete pwm_channels, etc
- * @return some error or ESP_OK
- */
-esp_err_t pwm_cleanup();
 
 #endif /* esp32_rmt_pwm_reader_h */
