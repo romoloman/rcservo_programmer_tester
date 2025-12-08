@@ -64,11 +64,11 @@ Software includes copies of the following libraries adapted to work with ESP32 F
 - With the touch pen turn around to the display to autocalibrate touch (need to be redone at any firwmare update)
 - Connect the servo to the servo connector Press "READ SERVO" to Read current configuration and "WRITE SERVO" to update it.
 
-In servo tester page you can adjust value to your needs, by clinking on minimum pulse or maximum pulse values, the clicked value will be copied in the desidered servo position.
+In servo tester page you can adjust value to your needs, by clicking on minimum pulse or maximum pulse values (the labels), the clicked value will be copied in the desidered servo position (useful to move immediately to either min/max position).
 
 If servo tester is started the servo will move immediately to the selected position. By clicking on the position value, the value will be reset to the center (1500).
 
-You can exit from programmer, servo tester and servo meter pages by swiping to the left.
+You can exit from programmer, servo tester and pulse meter pages by swiping the screen to the left.
     
 ## Contributing
 
